@@ -5,6 +5,7 @@ using BookStore.DataAccess;
 using BookStore.DataAccess.Models;
 using IkitMita;
 using IkitMita.Mvvm.ViewModels;
+using Microsoft.Practices.ServiceLocation;
 
 namespace BookStore.ViewModels
 {
@@ -15,6 +16,7 @@ namespace BookStore.ViewModels
         private ICollection<SearchBookModel> _foundBooks;
         private string _searchString;
         private DelegateCommand _searchBooksCommand;
+        private DelegateCommand _createorderCommand;
 
         public GetEmployeeModel CurrentEmployee
         {
@@ -50,6 +52,20 @@ namespace BookStore.ViewModels
             => _searchBooksCommand 
                  ?? (_searchBooksCommand = new DelegateCommand(SearchBooksAsync));
 
+        public DelegateCommand CreateOrderCommand
+            => _createorderCommand
+                 ?? (_createorderCommand = new DelegateCommand(CreateOrderAsync));
+
+        private async void CreateOrderAsync()
+        {
+            var vm = ServiceLocator.GetInstance<CreateOrderViewModel>();
+            vm.Parent = this;
+            vm.InitializeAsync();
+            vm.Show();
+
+            var modelResult = await vm;
+        }
+
         private async void SearchBooksAsync()
         {
             using (StartOperation())
@@ -73,6 +89,9 @@ namespace BookStore.ViewModels
 
         [Import]
         private ISecurityManager SecurityManager { get; set; }
+
+        [Import]
+        private IServiceLocator ServiceLocator { get; set; }
 
         public async void InitializeAsync()
         {

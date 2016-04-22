@@ -39,9 +39,44 @@ namespace DbRecreation
                 CreateBranches(db);
                 CreateEmployees(db);
                 CreateItems<Client>(db, "JsonData/Сlients.json");
-                CreateBooksAndAuthors(db);
+                CreateItems<Author>(db, "JsonData/Authors.json");
+                CreateBooks(db);
 
                 db.SaveChanges();
+            }
+        }
+
+        private static void CreateBooks(BookStoreDbContext db)
+        {
+            List<Book> books = CreateItems<Book>(db, "JsonData/Book.json");
+
+            foreach (var book in books)
+            {
+                //23-12345-123
+                book.Isbn = $"{_rand.Next(10, 100)}-{_rand.Next(10000,100000)}-{_rand.Next(100, 1000)}";
+                book.Price = _rand.Next(100, 5000);
+                book.PublishYear = _rand.Next(1990, 2016);
+
+                var authorsCount = _rand.Next(1, 4);
+                book.Authors = new List<Author>();
+                for (int i = 0; i < authorsCount; i++)
+                {
+                    book.Authors.Add(GetRandomItem(db.Authors.Local));
+                }
+
+                foreach (Branch branch in db.Branches.Local)
+                {
+                    if (_rand.Next()%10 == 0)
+                    {
+                        continue;
+                    }
+                    db.BookAmounts.Add(new BookAmount
+                    {
+                        Book = book,
+                        Branch = branch,
+                        Amount = _rand.Next(5, 50)
+                    });
+                }
             }
         }
 
@@ -63,36 +98,7 @@ namespace DbRecreation
                 employee.Branch = GetRandomItem(db.Branches.Local);
                 db.Employees.Add(employee);
             }
-        }
-
-        static void CreateBooksAndAuthors(BookStoreDbContext db)
-        {
-            db.BookAmounts.Add(new BookAmount
-            {
-                Amount = 10,
-                Branch = db.Employees.Local.First().Branch,
-                Book = new Book
-                {
-                    Isbn = "13-123456-12",
-                    Price = 125,
-                    PublishYear = 2015,
-                    Title = "CLR via C#",
-                    Authors = new List<Author>
-                    {
-                        new Author
-                        {
-                            LastName = "Richter",
-                            FirstName = "Jeffrey"
-                        },
-                        new Author
-                        {
-                            LastName = "Richter1",
-                            FirstName = "Jeffrey1"
-                        },
-                    }
-                }
-            });
-        }
+        }        
 
         private static readonly Random _rand = new Random();
         private static T GetRandomItem<T>(ICollection<T> collection)
