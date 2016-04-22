@@ -26,8 +26,13 @@
             </wpf:LabeledControl>
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Bottom">
-
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Red"
+                       FontWeight="Bold" />
+            <Button Content="Сохранить заказ" 
+                    Command="{Binding SaveOrderCommand}" />
         </StackPanel>
 
         <Grid>

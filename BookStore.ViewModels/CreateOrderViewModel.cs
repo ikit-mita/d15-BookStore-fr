@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace BookStore.ViewModels
         private GetEmployeeModel _currentEmployee;
         private DelegateCommand<string> _searchBooksCommand;
         private DelegateCommand<SearchBookModel> _selectBookCommand;
+        private DelegateCommand _saveOrderCommand;
+        private string _errorMessage;
 
         public CreateOrderViewModel()
         {
@@ -59,11 +62,54 @@ namespace BookStore.ViewModels
             }
         }
 
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set
+            {
+                _errorMessage = value; 
+                OnPropertyChanged();
+            }
+        }
+
         public DelegateCommand<string> SearchBooksCommand => _searchBooksCommand
                ?? (_searchBooksCommand = new DelegateCommand<string>(SearchBooks));
 
         public DelegateCommand<SearchBookModel> SelectBookCommand => _selectBookCommand
                ?? (_selectBookCommand = new DelegateCommand<SearchBookModel>(SelectBook));
+
+        public DelegateCommand SaveOrderCommand => _saveOrderCommand
+               ?? (_saveOrderCommand = new DelegateCommand(SaveOrderAsync));
+
+        private async void SaveOrderAsync()
+        {
+            if (SelectedClient == null)
+            {
+                ErrorMessage = "Выберите клиента";
+                return;
+            }
+
+            if (OrderedBooks.IsNullOrEmpty())
+            {
+                ErrorMessage = "Выберите книги";
+                return;
+            }
+
+            using (StartOperation())
+            {
+                var saveOrderModel = new SaveOrderModel
+                {
+                    BranchId = _currentEmployee.BranchId,
+                    ClientId = SelectedClient.Id,
+                    EmployeeId = _currentEmployee.Id,
+                    OrderDate = DateTime.Now,
+                    OrderedBooks = OrderedBooks
+                };
+
+                await SaveOrderOperation.ExecuteAsync(saveOrderModel);
+                await Close(true);
+            }
+        }
 
         public async void InitializeAsync()
         {
@@ -114,6 +160,9 @@ namespace BookStore.ViewModels
 
         [Import]
         private IGetEmployeeOperation GetEmployeeOperation { get; set; }
+
+        [Import]
+        private ISaveOrderOperation SaveOrderOperation { get; set; }
 
         [Import]
         private ISecurityManager SecurityManager { get; set; }
