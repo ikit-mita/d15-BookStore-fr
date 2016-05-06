@@ -1,36 +1,26 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using BookStore.DataAccess.Models;
 
 namespace BookStore.DataAccess.WebApi.Operations
 {
     [Export(typeof(IGetEmployeeOperation))]
-    class GetEmployeeOperation : IGetEmployeeOperation
+    class GetEmployeeOperation : WebApiClient, IGetEmployeeOperation
     {
         public async Task<GetEmployeeModel> ExecuteAsync(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("http://localhost:62598/api/");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept
-                    .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var responseMessage = await client.GetAsync($"employees/{id}");
-
-                if (responseMessage.IsSuccessStatusCode)
-                {
-                    var employeeModel = await responseMessage.Content
-                        .ReadAsAsync<GetEmployeeModel>();
-
-                    return employeeModel;
-                }
-
-                return null;
+                return await GetAsync<GetEmployeeModel>($"employees/{id}");
             }
+            catch (Exception exc)
+            {
+                Debug.WriteLine(exc);
+            }
+
+            return null;
         }
     }
 }
