@@ -2,12 +2,14 @@
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using BookStore.BusinessLogic;
 using BookStore.DataAccess.Models;
 
-namespace BookStore.BusinessLogic
+namespace BookStore.DataAccess.WebApi
 {
     [Export(typeof(ISecurityManager))]
-    class SecurityManager : ISecurityManager
+    [Export(typeof(IAuthTokenProvider))]
+    class SecurityManager : ISecurityManager, IAuthTokenProvider
     {
         private GetUserModel _authUser;
 
@@ -15,9 +17,9 @@ namespace BookStore.BusinessLogic
         {
             try
             {
-                var isValid = PasswordManager.ValidatePassword(password, user.Password);
+                //var isValid = PasswordManager.ValidatePassword(password, user.Password);
 
-                if (isValid)
+                if (user != null)
                 {
                     _authUser = user;
                     return true;
@@ -44,6 +46,11 @@ namespace BookStore.BusinessLogic
         public Task<bool> IsInRoleAsync(string role)
         {
             throw new NotImplementedException();
+        }
+
+        public string ProvideAuthToken()
+        {
+            return _authUser?.Password;
         }
     }
 }

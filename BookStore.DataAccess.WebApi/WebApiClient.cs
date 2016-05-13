@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using IkitMita;
 
 namespace BookStore.DataAccess.WebApi
 {
@@ -17,6 +19,14 @@ namespace BookStore.DataAccess.WebApi
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var authToken = AuthTokenProvider?.ProvideAuthToken();
+
+            if (!authToken.IsNullOrEmpty())
+            {
+                client.DefaultRequestHeaders.Authorization = 
+                    AuthenticationHeaderValue.Parse(authToken);
+            }
 
             return client;
         }
@@ -43,6 +53,7 @@ namespace BookStore.DataAccess.WebApi
             }
         } 
 
-
+        [Import]
+        private IAuthTokenProvider AuthTokenProvider { get; set; }
     }
 }

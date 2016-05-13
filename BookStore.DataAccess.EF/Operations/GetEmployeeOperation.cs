@@ -9,11 +9,12 @@ namespace BookStore.DataAccess.EF.Operations
     [Export(typeof(IGetEmployeeOperation))]
     class GetEmployeeOperation : IGetEmployeeOperation
     {
-        public async Task<GetEmployeeModel> ExecuteAsync(int id)
+        public async Task<GetEmployeeModel> ExecuteAsync(string userName)
         {
             using (var db = new BookStoreDbContext())
             {
                 var employee = await db.Employees
+                    .Where(e => e.User.UserName == userName)
                     .Select(e => new GetEmployeeModel
                     {
                         Id = e.Id,
@@ -26,7 +27,7 @@ namespace BookStore.DataAccess.EF.Operations
                         LastName = e.LastName,
                         MiddleName = e.MiddleName
                     })
-                    .FirstOrDefaultAsync(u => u.Id == id);
+                    .FirstOrDefaultAsync();
 
                 return employee;
             }

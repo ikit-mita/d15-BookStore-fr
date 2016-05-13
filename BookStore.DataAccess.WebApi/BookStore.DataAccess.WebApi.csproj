@@ -57,12 +57,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthModel.cs" />
+    <Compile Include="IAuthTokenProvider.cs" />
     <Compile Include="Operations\GetClientsOperation.cs" />
     <Compile Include="Operations\GetEmployeeOperation.cs" />
     <Compile Include="Operations\GetUserOperation.cs" />
     <Compile Include="Operations\SaveOrderOperation.cs" />
     <Compile Include="Operations\SearchBooksOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityManager.cs" />
     <Compile Include="WebApiClient.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +73,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BookStore.BusinessLogic\BookStore.BusinessLogic.csproj">
+      <Project>{EF952C21-465F-46D5-A069-AB31C7A216E4}</Project>
+      <Name>BookStore.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BookStore.DataAccess\BookStore.DataAccess.csproj">
       <Project>{D9659D88-AECF-4201-8A0D-9962710FB8B5}</Project>
       <Name>BookStore.DataAccess</Name>

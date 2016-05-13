@@ -14,7 +14,7 @@ namespace BookStore.WebService.Controllers
         [Import]
         private IGetEmployeeOperation GetEmployeeOperation { get; set; }
 
-        public async Task<GetEmployeeModel> GetEmployeeAsync(int id)
+        public async Task<GetEmployeeModel> GetEmployeeAsync(string id)
         {
             return await GetEmployeeOperation.ExecuteAsync(id);
         }

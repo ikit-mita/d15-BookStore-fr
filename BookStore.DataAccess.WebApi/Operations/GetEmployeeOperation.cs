@@ -9,11 +9,11 @@ namespace BookStore.DataAccess.WebApi.Operations
     [Export(typeof(IGetEmployeeOperation))]
     class GetEmployeeOperation : WebApiClient, IGetEmployeeOperation
     {
-        public async Task<GetEmployeeModel> ExecuteAsync(int id)
+        public async Task<GetEmployeeModel> ExecuteAsync(string userName)
         {
             try
             {
-                return await GetAsync<GetEmployeeModel>($"employees/{id}");
+                return await GetAsync<GetEmployeeModel>($"employees/{userName}");
             }
             catch (Exception exc)
             {

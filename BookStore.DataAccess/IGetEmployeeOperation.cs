@@ -5,6 +5,6 @@ namespace BookStore.DataAccess
 {
     public interface IGetEmployeeOperation
     {
-        Task<GetEmployeeModel> ExecuteAsync(int id);
+        Task<GetEmployeeModel> ExecuteAsync(string userName);
     }
 }

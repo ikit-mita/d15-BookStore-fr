@@ -28,7 +28,7 @@ namespace BookStore.DataAccess.EF.Operations
                 ? null 
                 : new GetUserModel
                     {
-                        Id = user.Id.GetHashCode(),
+                        Id = user.Id,
                         Login = user.UserName,
                         Password = user.PasswordHash
                     };

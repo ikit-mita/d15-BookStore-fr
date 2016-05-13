@@ -1,20 +1,40 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Net.Http;
 using System.Threading.Tasks;
 using BookStore.DataAccess.Models;
 
 namespace BookStore.DataAccess.WebApi.Operations
 {
     [Export(typeof(IGetUserOperation))]
-    class GetUserOperation : IGetUserOperation
+    class GetUserOperation : WebApiClient, IGetUserOperation
     {
-        public Task<GetUserModel> ExecuteAsync(string login)
+        public async Task<GetUserModel> ExecuteAsync(string login)
         {
-            return Task.FromResult(new GetUserModel
+            using (var client = CreateHttpClient())
             {
-                Id = 1,
-                Login = "zaverden",
-                Password = "1000:jKrU+pi6S6K6wSwqk9U/IMq+Zqj8Wpoa:T/XjYI5VKPqnKCYRuXHLrKb5/5ZJ3fj5"
-            });
+                var responseMessage = await client
+                    .PostAsync("/token", new FormUrlEncodedContent(
+                        new Dictionary<string, string>
+                        {
+                            ["username"] = "zaverden",
+                            ["password"] = "qwe123",
+                            ["grant_type"] = "password"
+                        }));
+
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var authModel = await responseMessage.Content.ReadAsAsync<AuthModel>();
+                return new GetUserModel
+                {
+                    Id = authModel.UserName,
+                    Login = authModel.UserName,
+                    Password = authModel.Token_type + " " + authModel.Access_token
+                };
+            }
         }
     }
 }
