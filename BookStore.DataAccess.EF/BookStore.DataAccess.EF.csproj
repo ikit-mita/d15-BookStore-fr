@@ -46,6 +46,14 @@
       <HintPath>..\packages\JetBrains.Annotations.10.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -58,7 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BookStoreContext.cs" />
+    <Compile Include="BookStoreDbContext.cs" />
     <Compile Include="Migrations\201603120521591_InitialModel.cs" />
     <Compile Include="Migrations\201603120521591_InitialModel.Designer.cs">
       <DependentUpon>201603120521591_InitialModel.cs</DependentUpon>
@@ -67,6 +75,11 @@
     <Compile Include="Migrations\201604080934227_CompleteModel.Designer.cs">
       <DependentUpon>201604080934227_CompleteModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605131229195_AddAspNetIdentity.cs" />
+    <Compile Include="Migrations\201605131229195_AddAspNetIdentity.Designer.cs">
+      <DependentUpon>201605131229195_AddAspNetIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Author.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\BookAmount.cs" />
@@ -76,7 +89,6 @@
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderedBook.cs" />
     <Compile Include="Models\Role.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Operations\GetClientsOperation.cs" />
     <Compile Include="Operations\GetEmployeeOperation.cs" />
     <Compile Include="Operations\GetUserOperation.cs" />
@@ -101,6 +113,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604080934227_CompleteModel.resx">
       <DependentUpon>201604080934227_CompleteModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605131229195_AddAspNetIdentity.resx">
+      <DependentUpon>201605131229195_AddAspNetIdentity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

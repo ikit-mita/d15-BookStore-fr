@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using BookStore.DataAccess.EF;
+using BookStore.DataAccess.EF.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using BookStore.WebService.Models;
 
 namespace BookStore.WebService
 {
@@ -18,7 +18,7 @@ namespace BookStore.WebService
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
-            var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
+            var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<BookStoreDbContext>()));
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
@@ -32,7 +32,7 @@ namespace BookStore.WebService
                 RequireNonLetterOrDigit = true,
                 RequireDigit = true,
                 RequireLowercase = true,
-                RequireUppercase = true,
+                RequireUppercase = true
             };
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)

@@ -5,9 +5,11 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using BookStore.BusinessLogic;
 using BookStore.DataAccess.EF;
 using BookStore.DataAccess.EF.Models;
+using JetBrains.Annotations;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Newtonsoft.Json;
 using Configuration = BookStore.DataAccess.EF.Migrations.Configuration;
 
@@ -15,8 +17,9 @@ namespace DbRecreation
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main([NotNull] string[] args)
         {
+            if (args == null) throw new ArgumentNullException(nameof(args));
             var contextName = typeof(BookStoreDbContext).Name;
 
             if (Database.Exists(contextName))
@@ -42,6 +45,27 @@ namespace DbRecreation
                 CreateItems<Author>(db, "JsonData/Authors.json");
                 CreateBooks(db);
 
+                db.SaveChanges();
+                CreateApplicationUsers(db);
+            }
+        }
+
+        private static void CreateApplicationUsers(BookStoreDbContext db)
+        {
+            var jsonData = File.ReadAllText("jsonData/users.json");
+            var userModels = JsonConvert.DeserializeObject<List<UserModel>>(jsonData);
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+
+            foreach (UserModel userModel in userModels)
+            {
+                var applicationUser = new ApplicationUser
+                {
+                    UserName = userModel.Login
+                };
+
+                userManager.Create(applicationUser, userModel.Password);
+                var employee = db.Employees.Find(userModel.EmployeeId);
+                employee.UserId = applicationUser.Id;
                 db.SaveChanges();
             }
         }
@@ -94,7 +118,6 @@ namespace DbRecreation
 
             foreach (Employee employee in employees)
             {
-                employee.User.Password = PasswordManager.CreateHash(employee.User.Password);
                 employee.Branch = GetRandomItem(db.Branches.Local);
                 db.Employees.Add(employee);
             }
