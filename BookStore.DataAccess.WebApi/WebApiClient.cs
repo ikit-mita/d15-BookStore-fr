@@ -31,5 +31,18 @@ namespace BookStore.DataAccess.WebApi
                 return result;
             }
         } 
+
+        protected async Task<T> PostAsync<T>(string url, object model)
+        {
+            using (var client = CreateHttpClient())
+            {
+                var responseMessage = await client.PostAsJsonAsync(url, model);
+                responseMessage.EnsureSuccessStatusCode();
+                var result = await responseMessage.Content.ReadAsAsync<T>();
+                return result;
+            }
+        } 
+
+
     }
 }
